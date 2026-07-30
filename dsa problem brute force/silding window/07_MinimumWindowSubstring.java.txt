@@ -1,0 +1,52 @@
+class Solution {
+
+    public String minWindow(String s, String t) {
+
+        int minLength = Integer.MAX_VALUE;
+        int start = -1;
+
+        // Frequency map of t
+        Map<Character, Integer> target = new HashMap<>();
+
+        for (char ch : t.toCharArray()) {
+            target.put(ch, target.getOrDefault(ch, 0) + 1);
+        }
+
+        for (int i = 0; i < s.length(); i++) {
+
+            Map<Character, Integer> window = new HashMap<>();
+
+            for (int j = i; j < s.length(); j++) {
+
+                char ch = s.charAt(j);
+                window.put(ch, window.getOrDefault(ch, 0) + 1);
+
+                if (isValid(window, target)) {
+
+                    if (j - i + 1 < minLength) {
+                        minLength = j - i + 1;
+                        start = i;
+                    }
+
+                    // No need to expand further from this i
+                    break;
+                }
+            }
+        }
+
+        return start == -1 ? "" : s.substring(start, start + minLength);
+    }
+
+    private boolean isValid(Map<Character, Integer> window,
+                            Map<Character, Integer> target) {
+
+        for (char ch : target.keySet()) {
+
+            if (window.getOrDefault(ch, 0) < target.get(ch)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
